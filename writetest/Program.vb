@@ -1,28 +1,24 @@
-Imports System
-
 Module Program
 
-    'Const LOG_PATH1 As String = "log.txt"
-    Const LOG_PATH2 As String = "log2.txt"
-
+    Const LOG_PATH As String = "log.txt"
     Public randomGenerator As Random
-
     Public writer As IO.StreamWriter
+    Public counter As Integer = 0
 
     Sub Main()
-        If IO.File.Exists(LOG_PATH2) Then
+        If IO.File.Exists(LOG_PATH) Then
             Try
-                writer = New IO.StreamWriter(LOG_PATH2)
+                writer = New IO.StreamWriter(LOG_PATH)
             Catch ex As Exception
-                Console.WriteLine("Debug 1: " & ex.Message)
+                Console.WriteLine(ex.Message)
                 Console.ReadKey()
                 Return
             End Try
         Else
             Try
-                IO.File.CreateText(LOG_PATH2)
+                writer = IO.File.CreateText(LOG_PATH)
             Catch ex As Exception
-                Console.WriteLine("Debug 2: " & ex.Message)
+                Console.WriteLine(ex.Message)
                 Console.ReadKey()
                 Return
             End Try
@@ -31,12 +27,12 @@ Module Program
 
         randomGenerator = New Random()
 
+        Task.Delay(2000).GetAwaiter().GetResult()
+
         StartEmulators().GetAwaiter().GetResult()
     End Sub
 
     Async Function StartEmulators() As Task
-        Await Task.Delay(2000)
-
         Dim t1 = EventEmulator(1)
         Dim t2 = EventEmulator(2)
         Dim t3 = EventEmulator(3)
@@ -49,7 +45,8 @@ Module Program
         Do
             Dim randomDelay As Integer = randomGenerator.Next(100)
             Await Task.Delay(randomDelay)
-            Logger($"{DateTime.Now,-19} Test Log message. Emulator{number} The delay was {randomDelay} ms.")
+            counter += 1
+            Logger($"{DateTime.Now,-19} {counter} Test Log message. Emulator{number} The delay was {randomDelay} ms.")
         Loop
     End Function
 
@@ -57,10 +54,9 @@ Module Program
         Try
             Console.WriteLine(text)
             writer.WriteLineAsync(text)
-            'IO.File.AppendAllText(LOG_PATH1, text & vbCrLf)
         Catch ex As Exception
             Console.ForegroundColor = ConsoleColor.Red
-            Console.WriteLine("Debug 3: " & ex.Message)
+            Console.WriteLine(ex.Message)
             Console.ForegroundColor = ConsoleColor.Gray
         End Try
     End Sub
