@@ -2,21 +2,34 @@ Imports System
 
 Module Program
 
-    Const LOG_PATH As String = "log.txt"
-    Public counter As Integer
+    'Const LOG_PATH1 As String = "log.txt"
+    Const LOG_PATH2 As String = "log2.txt"
+
     Public randomGenerator As Random
 
+    Public writer As IO.StreamWriter
+
     Sub Main()
-        Try
-            IO.File.Create(LOG_PATH)
-        Catch ex As Exception
-            Console.WriteLine(ex.Message)
-            Console.ReadKey()
-            Return
-        End Try
+        If IO.File.Exists(LOG_PATH2) Then
+            Try
+                writer = New IO.StreamWriter(LOG_PATH2)
+            Catch ex As Exception
+                Console.WriteLine("Debug 1: " & ex.Message)
+                Console.ReadKey()
+                Return
+            End Try
+        Else
+            Try
+                IO.File.CreateText(LOG_PATH2)
+            Catch ex As Exception
+                Console.WriteLine("Debug 2: " & ex.Message)
+                Console.ReadKey()
+                Return
+            End Try
+
+        End If
 
         randomGenerator = New Random()
-        counter = 0
 
         StartEmulators().GetAwaiter().GetResult()
     End Sub
@@ -24,51 +37,30 @@ Module Program
     Async Function StartEmulators() As Task
         Await Task.Delay(2000)
 
-        Dim t1 = EventEmulator1()
-        Dim t2 = EventEmulator2()
-        Dim t3 = EventEmulator3()
-        Dim t4 = EventEmulator4()
+        Dim t1 = EventEmulator(1)
+        Dim t2 = EventEmulator(2)
+        Dim t3 = EventEmulator(3)
+        Dim t4 = EventEmulator(4)
 
-        Console.ReadKey()
-        Return
+        Await Task.Delay(Threading.Timeout.Infinite)
     End Function
 
-    Async Function EventEmulator1() As Task
+    Async Function EventEmulator(number As Integer) As Task
         Do
             Dim randomDelay As Integer = randomGenerator.Next(100)
             Await Task.Delay(randomDelay)
-            Logger($"{DateTime.Now,-19} {counter + 1,5} Test Log message. Emulator1 The delay was {randomDelay} ms.")
-        Loop
-    End Function
-    Async Function EventEmulator2() As Task
-        Do
-            Dim randomDelay As Integer = randomGenerator.Next(100)
-            Await Task.Delay(randomDelay)
-            Logger($"{DateTime.Now,-19} {counter + 1,5} Test Log message. Emulator2 The delay was {randomDelay} ms.")
-        Loop
-    End Function
-    Async Function EventEmulator3() As Task
-        Do
-            Dim randomDelay As Integer = randomGenerator.Next(100)
-            Await Task.Delay(randomDelay)
-            Logger($"{DateTime.Now,-19} {counter + 1,5} Test Log message. Emulator3 The delay was {randomDelay} ms.")
-        Loop
-    End Function
-    Async Function EventEmulator4() As Task
-        Do
-            Dim randomDelay As Integer = randomGenerator.Next(100)
-            Await Task.Delay(randomDelay)
-            Logger($"{DateTime.Now,-19} {counter + 1,5} Test Log message. Emulator4 The delay was {randomDelay} ms.")
+            Logger($"{DateTime.Now,-19} Test Log message. Emulator{number} The delay was {randomDelay} ms.")
         Loop
     End Function
 
     Sub Logger(text As String)
         Try
             Console.WriteLine(text)
-            IO.File.AppendAllText(LOG_PATH, text & vbCrLf)
+            writer.WriteLineAsync(text)
+            'IO.File.AppendAllText(LOG_PATH1, text & vbCrLf)
         Catch ex As Exception
             Console.ForegroundColor = ConsoleColor.Red
-            Console.WriteLine(ex.Message)
+            Console.WriteLine("Debug 3: " & ex.Message)
             Console.ForegroundColor = ConsoleColor.Gray
         End Try
     End Sub
