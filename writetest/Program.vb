@@ -3,6 +3,8 @@ Module Program
     'writer auto flushes every 8kb!
 
     'testing commit
+    'sds
+    
 
 
     Const LOG_PATH As String = "./log.txt"
