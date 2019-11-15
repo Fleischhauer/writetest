@@ -2,10 +2,7 @@ Module Program
 
     'writer auto flushes every 8kb!
 
-    'testing commit
-    'sds
-    
-
+    'Maybe the other one?
 
     Const LOG_PATH As String = "./log.txt"
     Public randomGenerator As Random
