@@ -2,7 +2,7 @@ Module Program
 
     'writer auto flushes every 8kb!
 
-    'Maybe the other one?
+    'Test
 
     Const LOG_PATH As String = "./log.txt"
     Public randomGenerator As Random
