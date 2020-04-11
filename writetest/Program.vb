@@ -2,8 +2,6 @@ Module Program
 
     'writer auto flushes every 8kb!
 
-    'Test
-
     Const LOG_PATH As String = "./log.txt"
     Public randomGenerator As Random
     Public writer As IO.StreamWriter
@@ -64,11 +62,10 @@ Module Program
         Loop
     End Function
 
-    Sub Logger(text As String)
+    Async Sub Logger(text As String)
         Try
             Console.WriteLine(text)
-            writer.WriteLineAsync(text)
-            writer.Flush()
+            Await writer.WriteLineAsync(text)
         Catch ex As Exception
             Console.ForegroundColor = ConsoleColor.Red
             Console.WriteLine(ex.Message)
